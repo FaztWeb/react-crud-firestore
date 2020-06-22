@@ -78,7 +78,7 @@ const Links = () => {
                 </div>
               </div>
               <p>{link.description}</p>
-              <a href={link.url}>Go to Website</a>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">Go to Website</a>
             </div>
           </div>
         ))}
