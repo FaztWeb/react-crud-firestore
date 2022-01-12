@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { db } from "../firebase";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { getTask } from "../api/links";
 
 const LinksForm = (props) => {
   const initialStateValues = {
@@ -19,10 +19,10 @@ const LinksForm = (props) => {
   const validURL = (str) => {
     var pattern = new RegExp(
       "^(https?:\\/\\/)?" + // protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
         "(\\#[-a-z\\d_]*)?$",
       "i"
     ); // fragment locator
@@ -32,16 +32,15 @@ const LinksForm = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validURL(values.url)) {
+    if (!validURL(values.url))
       return toast("invalid url", { type: "warning", autoClose: 1000 });
-    }
 
     props.addOrEditLink(values);
     setValues({ ...initialStateValues });
   };
 
   const getLinkById = async (id) => {
-    const doc = await db.collection("links").doc(id).get();
+    const doc = await getTask(id);
     setValues({ ...doc.data() });
   };
 
@@ -55,9 +54,10 @@ const LinksForm = (props) => {
   }, [props.currentId]);
 
   return (
-    <form onSubmit={handleSubmit} className="card card-body border-primary">
-      <div className="form-group input-group">
-        <div className="input-group-text bg-light">
+    <form onSubmit={handleSubmit} className="card card-body bg-secondary">
+      <label htmlFor="url">Paste your URL</label>
+      <div className="input-group mb-3">
+        <div className="input-group-text bg-dark">
           <i className="material-icons">insert_link</i>
         </div>
         <input
@@ -69,8 +69,10 @@ const LinksForm = (props) => {
           onChange={handleInputChange}
         />
       </div>
-      <div className="form-group input-group">
-        <div className="input-group-text bg-light">
+
+      <label htmlFor="name">Website Name:</label>
+      <div className="input-group">
+        <div className="input-group-text bg-dark">
           <i className="material-icons">create</i>
         </div>
         <input
@@ -78,22 +80,25 @@ const LinksForm = (props) => {
           value={values.name}
           name="name"
           placeholder="Website Name"
-          className="form-control"
+          className="form-control mb-3"
           onChange={handleInputChange}
         />
       </div>
-      <div className="form-group">
-        <textarea
-          rows="3"
-          className="form-control"
-          placeholder="Write a Description"
-          name="description"
-          value={values.description}
-          onChange={handleInputChange}
-        ></textarea>
-      </div>
 
-      <button className="btn btn-primary btn-block">
+      <label htmlFor="description">Write a Description:</label>
+      <textarea
+        rows="3"
+        className="form-control mb-3"
+        placeholder="Write a Description"
+        name="description"
+        value={values.description}
+        onChange={handleInputChange}
+      ></textarea>
+
+      <button
+        className="btn btn-primary btn-block"
+        disabled={!values.url || !values.name}
+      >
         {props.currentId === "" ? "Save" : "Update"}
       </button>
     </form>

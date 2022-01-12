@@ -1,7 +1,4 @@
-import React from "react";
 import Links from "./components/Links";
-import "./App.css";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
