@@ -1,15 +1,20 @@
-import Links from "./components/Links";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { WebsiteList } from "./components/WebsiteList";
+import { WebsiteForm } from "./components/WebsiteForm";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 
 function App() {
   return (
-    <div className="container p-4">
-      <div className="row">
-        <Links />
-      </div>
-      <ToastContainer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={<WebsiteList />} />
+          <Route path="add" element={<WebsiteForm />} />
+          <Route path="edit/:id" element={<WebsiteForm />} />
+          <Route path="*" element={<h1>Not Found</h1>} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
